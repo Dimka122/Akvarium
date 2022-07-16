@@ -63,9 +63,9 @@ namespace Akvarium.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap _1648018350_1_kartinkin_net_p_kartinki_dlya_akvariuma_1 {
+        internal static System.Drawing.Bitmap akvarium {
             get {
-                object obj = ResourceManager.GetObject("1648018350_1-kartinkin-net-p-kartinki-dlya-akvariuma-1", resourceCulture);
+                object obj = ResourceManager.GetObject("akvarium", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,19 +73,9 @@ namespace Akvarium.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap _1648018396_3_kartinkin_net_p_kartinki_dlya_akvariuma_3 {
+        internal static System.Drawing.Bitmap img5 {
             get {
-                object obj = ResourceManager.GetObject("1648018396_3-kartinkin-net-p-kartinki-dlya-akvariuma-3", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap goldfish_koi_cartoon_drawing_fish_clipart_transparent_background_968320 {
-            get {
-                object obj = ResourceManager.GetObject("goldfish-koi-cartoon-drawing-fish-clipart-transparent-background-968320", resourceCulture);
+                object obj = ResourceManager.GetObject("img5", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
