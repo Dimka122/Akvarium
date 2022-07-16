@@ -37,10 +37,63 @@ namespace Akvarium
 
         }
 
+        private void MoveCircle()
+        {
+            //устанавливаем блокировку метода
+            lock (this)
+            {
+                //создаем контекст устройства
+                Graphics g = this.CreateGraphics();
+                //создаем красную кисть - для круга
+                //Brush b1 = Brushes.Red;
+                //и кисть цвета формы - для стирания круга
+                //Brush b2 = SystemBrushes.Control;
+                Bitmap akvarium = new Bitmap(@"C:\Users\Дима\source\repos\Akvarium\Akvarium\Akvarium\Resources\akvarium.jpg");
+                Bitmap fish = new Bitmap(@"C:\Users\Дима\source\repos\Akvarium\Akvarium\Akvarium\Resources\img5.jpg");
+                int x;
+                //координата x круга будет зависеть от имени потока
+                if (Thread.CurrentThread.Name == "First")
+                    x = Width / 2 - 30;
+                else
+                    x = Width / 2 + 30;
+                //цикл от верхнего до нижнего края формы
+                for (int y = 10; y < Height - 40; y++)
+                {
+                    //рисуем круг
+                    g.DrawImage(fish, x - 10, y - 10, 20, 20);
+                    //"усыпляем" поток на 30 миллисекунд
+                    Thread.Sleep(30);
+                    //если круг или его часть - внутри прямоугольника,
+                    if (y + 10 > rct.Y && y - 10 < rct.Y + rct.Height)
+                        //то перерисовываем прямоугольник
+                        Invalidate(rct);
+                    else
+                    {
+                        //разрешаем выполнение другого потока
+                        Monitor.Pulse(this);
+                        //ждем приостановки/завершения другого потока
+                        Monitor.Wait(this);
+                    }
+                    //стираем круг
+                    g.DrawImage(fish, x - 10, y - 10, 20, 20);
+                }
+                //выводим поток из режима ожидания
+                Monitor.Pulse(this);
+            }
+            //проверяем корректность завершения потока
+            MessageBox.Show("Поток " + Thread.CurrentThread.Name + "завершен!");
+
+        }
+
         private void Form1_Load_1(object sender, EventArgs e)
         {
-            Thread thread1=new Thread(new Thread(MoveCircle))
+            Thread thread1 = new Thread(new ThreadStart(MoveCircle));
                 thread1.Name = "First";
+            Thread thread2 = new Thread(new ThreadStart(MoveCircle));
+            thread2.Name = "Second";
+            //запускаем оба потока
+            thread1.Start();
+            thread2.Start();
         }
 
         private void timer1_Tick_1(object sender, EventArgs e)
@@ -68,6 +121,16 @@ namespace Akvarium
 
                 this.Invalidate(reg); // обновить область
             }
+        }
+
+        private void Form1_Paint(object sender, PaintEventArgs e)
+        {
+            //получаем контекст устройства
+            Graphics g = e.Graphics;
+            //создаем черную кисть
+            Brush b = Brushes.Black;
+            //рисуем прямоугольник
+            g.FillRectangle(b, rct);
         }
     }
 }
