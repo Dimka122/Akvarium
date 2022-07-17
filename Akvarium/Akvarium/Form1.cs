@@ -53,17 +53,17 @@ namespace Akvarium
             if (rct.X < this.ClientRectangle.Width) rct.X += dx;
             else
             {
-                // если граница, задаем заново положение самолета
+                // если граница, задаем заново положение 
 
                 rct.X = -40;
                 rct.Y = 40;
                 
 
             }
-            // рисуем самолет на рабочей поверхности
+            // рисуем  рабочей поверхности
             g.DrawImage(fish, rct.X, rct.Y);
             // Метод Invalidate(rct) - перерисовка области rct
-            if (!demo) this.Invalidate(rct); // обновить область, где самолет
+            if (!demo) this.Invalidate(rct); // обновить область
             else
             {
                 // если объект вне области rct, он не виден
@@ -92,18 +92,17 @@ namespace Akvarium
             if (rct.X < this.ClientRectangle.Width) rct.X += dx;
             else
             {
-                // если граница, задаем заново положение самолета
-
+                /
                 rct.X = -40;
                 
                 rct.Y = 40;
                 
 
             }
-            // рисуем самолет на рабочей поверхности
+            
             g.DrawImage(fish, rct.X, rct.Y);
             // Метод Invalidate(rct) - перерисовка области rct
-            if (!demo) this.Invalidate(rct); // обновить область, где самолет
+            if (!demo) this.Invalidate(rct); 
             else
             {
                 // если объект вне области rct, он не виден
