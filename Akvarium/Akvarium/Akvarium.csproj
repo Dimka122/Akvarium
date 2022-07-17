@@ -84,6 +84,7 @@
     <None Include="Resources\akvarium.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\img33.png" />
     <Content Include="Resources\img4.jpg" />
     <Content Include="Resources\img5.jpg" />
     <None Include="Resources\img51.jpg" />
