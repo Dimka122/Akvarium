@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
+using System.Drawing.Imaging;
+
 
 namespace Akvarium
 {
@@ -22,6 +24,7 @@ namespace Akvarium
         Boolean demo = true;
         public Form1()
         {
+
             InitializeComponent();
 
             fish.MakeTransparent();
@@ -38,13 +41,11 @@ namespace Akvarium
             //timer2.Enabled = true;
 
 
+
         }
-
-
-
         private void Form1_Load_1(object sender, EventArgs e)
         {
-
+            //g = CreateGraphics();
         }
 
         private void timer1_Tick_1(object sender, EventArgs e)
@@ -57,7 +58,7 @@ namespace Akvarium
 
                 rct.X = -40;
                 rct.Y = 40;
-                
+
 
             }
             // рисуем  рабочей поверхности
@@ -78,42 +79,49 @@ namespace Akvarium
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
-            ////получаем контекст устройства
-            //Graphics g = e.Graphics;
-            ////создаем черную кисть
-            //Brush b = Brushes.Black;
-            ////рисуем прямоугольник
-            //g.FillRectangle(b, rct);
+
+            //Point position = new Point(0, 90);
+            //g.DrawImage(akvarium, new Point(0, 0));
+            //if (rct.X < this.ClientRectangle.Width) rct.X += dx;
+            //else
+            //{
+
+            //    rct.X = 90;
+
+            //    rct.Y = 40;
+            //}
+            //g.DrawImage(fish, rct.X, rct.Y);
+            //// Метод Invalidate(rct) - перерисовка области rct
+            //if (!demo) this.Invalidate(rct);
+            //else
+            //{
+            //    // если объект вне области rct, он не виден
+            //    Rectangle reg = new Rectangle(20, 20, akvarium.Width - 40, akvarium.Height - 40);
+
+            //    // показать обновляемую область
+            //    g.DrawRectangle(Pens.Black, reg.X, reg.Y, reg.Width - 1, reg.Height - 1);
+
+            //    this.Invalidate(reg); // обновить область
         }
+    
 
         private void timer2_Tick(object sender, EventArgs e)
         {
-            g.DrawImage(akvarium, new Point(0, 0));
-            if (rct.X < this.ClientRectangle.Width) rct.X += dx;
-            else
-            {
-                /
-                rct.X = -40;
-                
-                rct.Y = 40;
-                
-
-            }
             
-            g.DrawImage(fish, rct.X, rct.Y);
-            // Метод Invalidate(rct) - перерисовка области rct
-            if (!demo) this.Invalidate(rct); 
-            else
-            {
-                // если объект вне области rct, он не виден
-                Rectangle reg = new Rectangle(20,20, akvarium.Width - 40, akvarium.Height - 40);
 
-                // показать обновляемую область
-                g.DrawRectangle(Pens.Black, reg.X, reg.Y, reg.Width - 1, reg.Height - 1);
 
-                this.Invalidate(reg); // обновить область
-            }
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void Form1_Click(object sender, EventArgs e)
+        {
+            
         }
     }
 }
+
 
