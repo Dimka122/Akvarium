@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace Akvarium
 {
@@ -91,7 +92,32 @@ namespace Akvarium
 
         public void Draw(Graphics g)
         {
-            g.DrawImage(FishImage, X, Y);
+            // Используем цветовую матрицу для изменения цвета рыбы
+            if (Color != Color.White) // Если это не исходный цвет
+            {
+                ColorMatrix colorMatrix = new ColorMatrix(new float[][]
+                {
+            new float[] {Color.R / 255f, 0, 0, 0, 0},
+            new float[] {0, Color.G / 255f, 0, 0, 0},
+            new float[] {0, 0, Color.B / 255f, 0, 0},
+            new float[] {0, 0, 0, Color.A / 255f, 0},
+            new float[] {0, 0, 0, 0, 1}
+                });
+
+                ImageAttributes imageAttributes = new ImageAttributes();
+                imageAttributes.SetColorMatrix(colorMatrix);
+
+                g.DrawImage(
+                    FishImage,
+                    new Rectangle(X, Y, Width, Height),
+                    0, 0, FishImage.Width, FishImage.Height,
+                    GraphicsUnit.Pixel,
+                    imageAttributes);
+            }
+            else
+            {
+                g.DrawImage(FishImage, X, Y);
+            }
         }
 
         public void Relocate(int aquariumWidth, int aquariumHeight)

@@ -14,8 +14,12 @@ namespace Akvarium
 {
     public partial class Form1 : Form
     {
-        Bitmap akvarium = new Bitmap(@"C:\Users\Дима\source\repos\Akvarium\Akvarium\Akvarium\Resources\akvarium.jpg");
-        Bitmap fishImage = new Bitmap(@"C:\Users\Дима\source\repos\Akvarium\Akvarium\Akvarium\Resources\img33.png");
+        Bitmap background; // Фон аквариума
+        Bitmap fishImage;  // Изображение рыбы
+
+        // Двойная буферизация для избежания мерцания
+        private Bitmap bufferBitmap;
+        private Graphics bufferGraphics;
 
         Graphics g;
         Random random = new Random();
@@ -25,73 +29,102 @@ namespace Akvarium
         // Цвета для разных рыб
         Color[] fishColors =
         {
-            Color.FromArgb(255, 255, 100, 100),   // Светло-красный
-            Color.FromArgb(255, 100, 255, 100),   // Светло-зеленый
-            Color.FromArgb(255, 100, 100, 255),   // Светло-синий
-            Color.FromArgb(255, 255, 255, 100),   // Желтый
-            Color.FromArgb(255, 255, 100, 255),   // Розовый
-            Color.FromArgb(255, 100, 255, 255),   // Голубой
-            Color.FromArgb(255, 255, 150, 50),    // Оранжевый
+            Color.FromArgb(255, 255, 100, 100),
+            Color.FromArgb(255, 100, 255, 100),
+            Color.FromArgb(255, 100, 100, 255),
+            Color.FromArgb(255, 255, 255, 100),
+            Color.FromArgb(255, 255, 100, 255),
+            Color.FromArgb(255, 100, 255, 255),
+            Color.FromArgb(255, 255, 150, 50),
         };
 
         public Form1()
         {
             InitializeComponent();
 
-            fishImage.MakeTransparent();
-            this.ClientSize = new System.Drawing.Size(new Point(akvarium.Width, akvarium.Height));
-            g = Graphics.FromImage(akvarium);
+            try
+            {
+                // Загружаем изображения
+                background = new Bitmap(@"C:\Users\user\source\repos\Akvariums\Akvarium\Akvarium\Resources\akvarium.jpg");
+                fishImage = new Bitmap(@"C:\Users\user\source\repos\Akvariums\Akvarium\Akvarium\Resources\img33.png");
 
-            // Создаем несколько рыб
-            InitializeFishes();
+                fishImage.MakeTransparent();
 
-            timer1.Interval = 20;
-            timer1.Enabled = true;
+                // Устанавливаем размер формы по размеру фона
+                this.ClientSize = background.Size;
+
+                // Создаем буфер для рисования
+                bufferBitmap = new Bitmap(background.Width, background.Height);
+                bufferGraphics = Graphics.FromImage(bufferBitmap);
+                g = bufferGraphics;
+
+                // Копируем фон в буфер
+                g.DrawImage(background, 0, 0);
+
+                // Создаем несколько рыб
+                InitializeFishes();
+
+                timer1.Interval = 50; // Увеличил интервал для плавности
+                timer1.Enabled = true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка загрузки изображений: {ex.Message}", "Ошибка",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void InitializeFishes()
         {
-            int fishCount = random.Next(5, 11); // От 5 до 10 рыб
+            int fishCount = random.Next(5, 11);
 
             for (int i = 0; i < fishCount; i++)
             {
                 Color fishColor = fishColors[random.Next(fishColors.Length)];
-                Fish fish = new Fish(fishImage, akvarium.Width, akvarium.Height, fishColor);
+                Fish fish = new Fish(fishImage, background.Width, background.Height, fishColor);
                 fishes.Add(fish);
             }
         }
 
         private void timer1_Tick_1(object sender, EventArgs e)
         {
-            // Очищаем и перерисовываем фон
-            g.DrawImage(akvarium, new Point(0, 0));
+            // Очищаем буфер, рисуя фон
+            bufferGraphics.DrawImage(background, 0, 0);
 
             // Обновляем и рисуем всех рыб
             foreach (Fish fish in fishes)
             {
-                fish.Move(akvarium.Width, akvarium.Height);
-                fish.Draw(g);
+                fish.Move(background.Width, background.Height);
+                fish.Draw(bufferGraphics);
             }
 
-            // Отображаем обновляемую область
-            Rectangle updateRegion = GetUpdateRegion();
+            // Принудительно обновляем всю форму
+            this.Invalidate();
+        }
 
-            if (!demo)
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+
+            // Рисуем буфер на форме
+            if (bufferBitmap != null)
             {
-                this.Invalidate(updateRegion);
+                e.Graphics.DrawImage(bufferBitmap, 0, 0);
             }
-            else
+
+            if (demo && fishes.Count > 0)
             {
-                g.DrawRectangle(Pens.Black, updateRegion.X, updateRegion.Y, updateRegion.Width - 1, updateRegion.Height - 1);
-                this.Invalidate(updateRegion);
+                Rectangle updateRegion = GetUpdateRegion();
+                e.Graphics.DrawRectangle(Pens.Black,
+                    updateRegion.X, updateRegion.Y,
+                    updateRegion.Width - 1, updateRegion.Height - 1);
             }
         }
 
         private Rectangle GetUpdateRegion()
         {
-            // Находим общую область, занимаемую всеми рыбами
             if (fishes.Count == 0)
-                return new Rectangle(0, 0, akvarium.Width, akvarium.Height);
+                return new Rectangle(0, 0, background.Width, background.Height);
 
             int minX = fishes[0].X;
             int minY = fishes[0].Y;
@@ -106,45 +139,28 @@ namespace Akvarium
                 maxY = Math.Max(maxY, fish.Y + fish.Height);
             }
 
-            // Добавляем отступы
             int margin = 10;
             minX = Math.Max(0, minX - margin);
             minY = Math.Max(0, minY - margin);
-            maxX = Math.Min(akvarium.Width, maxX + margin);
-            maxY = Math.Min(akvarium.Height, maxY + margin);
+            maxX = Math.Min(background.Width, maxX + margin);
+            maxY = Math.Min(background.Height, maxY + margin);
 
             return new Rectangle(minX, minY, maxX - minX, maxY - minY);
         }
 
         private void Form1_Load_1(object sender, EventArgs e)
         {
-            // Инициализация при загрузке формы
-        }
-
-        private void Form1_Paint(object sender, PaintEventArgs e)
-        {
-            // Отрисовка происходит в таймере
-        }
-
-        private void timer2_Tick(object sender, EventArgs e)
-        {
-            // Дополнительный таймер для будущей функциональности
-        }
-
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            // Выбор скорости или режима анимации
-            // Можно добавить управление количеством рыб
+            // Включаем двойную буферизацию для формы
+            this.DoubleBuffered = true;
         }
 
         private void Form1_Click(object sender, EventArgs e)
         {
-            // При клике добавляем новую рыбу или перемешиваем всех рыб
             if (random.Next(2) == 0 && fishes.Count < 20)
             {
                 // Добавляем новую рыбу
                 Color fishColor = fishColors[random.Next(fishColors.Length)];
-                Fish newFish = new Fish(fishImage, akvarium.Width, akvarium.Height, fishColor);
+                Fish newFish = new Fish(fishImage, background.Width, background.Height, fishColor);
                 fishes.Add(newFish);
             }
             else
@@ -152,38 +168,51 @@ namespace Akvarium
                 // Перемещаем всех рыб в новые позиции
                 foreach (Fish fish in fishes)
                 {
-                    fish.Relocate(akvarium.Width, akvarium.Height);
+                    fish.Relocate(background.Width, background.Height);
                 }
             }
+
+            // Обновляем отображение
+            this.Invalidate();
         }
 
-        // Метод для добавления определенного количества рыб
+        // Остальные методы остаются без изменений
         public void AddFish(int count)
         {
             for (int i = 0; i < count; i++)
             {
-                if (fishes.Count < 50) // Максимум 50 рыб
+                if (fishes.Count < 50)
                 {
                     Color fishColor = fishColors[random.Next(fishColors.Length)];
-                    Fish newFish = new Fish(fishImage, akvarium.Width, akvarium.Height, fishColor);
+                    Fish newFish = new Fish(fishImage, background.Width, background.Height, fishColor);
                     fishes.Add(newFish);
                 }
             }
+            this.Invalidate();
         }
 
-        // Метод для удаления рыб
         public void RemoveFish(int count)
         {
             for (int i = 0; i < count && fishes.Count > 0; i++)
             {
                 fishes.RemoveAt(fishes.Count - 1);
             }
+            this.Invalidate();
         }
 
-        // Метод для получения количества рыб
         public int GetFishCount()
         {
             return fishes.Count;
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            base.OnFormClosing(e);
+
+            // Освобождаем ресурсы
+            if (bufferGraphics != null) bufferGraphics.Dispose();
+            if (bufferBitmap != null) bufferBitmap.Dispose();
+            if (g != null) g.Dispose();
         }
     }
 }

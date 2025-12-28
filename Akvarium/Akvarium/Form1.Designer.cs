@@ -40,7 +40,7 @@
             // 
             // timer2
             // 
-            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            //this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
             // 
             // comboBox1
             // 
@@ -56,7 +56,7 @@
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 21);
             this.comboBox1.TabIndex = 0;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            //this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // Form1
             // 
@@ -70,7 +70,7 @@
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load_1);
             this.Click += new System.EventHandler(this.Form1_Click);
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
+           // this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
             this.ResumeLayout(false);
 
         }
