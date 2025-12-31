@@ -46,7 +46,7 @@ namespace Akvarium
             {
                 // Загружаем изображения
                 background = new Bitmap(@"C:\Users\user\source\repos\Akvariums\Akvarium\Akvarium\Resources\akvarium.jpg");
-                fishImage = new Bitmap(@"C:\Users\user\source\repos\Akvariums\Akvarium\Akvarium\Resources\img33.png");
+                fishImage = new Bitmap(@"C:\Users\user\source\repos\Akvariums\Akvarium\Akvarium\Resources\img333.png");
 
                 fishImage.MakeTransparent();
 
@@ -176,7 +176,7 @@ namespace Akvarium
             this.Invalidate();
         }
 
-        // Остальные методы остаются без изменений
+        
         public void AddFish(int count)
         {
             for (int i = 0; i < count; i++)
